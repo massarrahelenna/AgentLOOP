@@ -19,7 +19,11 @@ def pesquisar(query):
     return results.get("organic_results", [{}])[0].get("snippet", "Sem resultados.")
 
 def calcular(expressao):
-    return str(eval(expressao))
+    expressao_corrigida = expressao.replace("^", "**")  # Para permitir potências
+    try:
+        return str(eval(expressao_corrigida))
+    except Exception as e:
+        return f"Erro ao calcular: {e}"
 
 # Mapeamos as funções para o código saber o que rodar
 tools = {"pesquisar": pesquisar, "calcular": calcular}
@@ -28,6 +32,7 @@ tools = {"pesquisar": pesquisar, "calcular": calcular}
 
 system_prompt = """
 Você é um Agente que resolve problemas em passos.
+Estamos no ano de 2026. Sempre que pesquisar preços, use o ano corrente como referência
 Comandos disponíveis:
 - pesquisar: "termo de busca"
 - calcular: "expressao matematica"
@@ -62,4 +67,12 @@ def rodar_loop(pergunta):
         else:
             break
 
-rodar_loop("Qual o valor atual da ação da Apple e quanto daria para comprar 5 ações com 10% de desconto? Converta o valor par REAL")
+if __name__ == "__main__":
+    print("Bem-vindo ao Agente LOOP! Digite sua pergunta ou escreva 'sair' para encerrar.")
+    
+    while True:
+        pergunta = input("\nDigite sua pergunta: ")
+        if pergunta.lower() == "sair":
+            print("Encerrando o Agente LOOP :)")
+            break
+        rodar_loop(pergunta)
